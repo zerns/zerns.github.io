@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Location Map</title>
+
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    crossorigin=""
+  />
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    #map {
+      height: 70%;
+      width: 60%;
+      margin: auto;
+      display: block;
+    }
+
+    #coords {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+
+    .leaflet-control-locate {
+      background-color: white;
+      padding: 6px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      box-shadow: 0 0 4px rgba(0,0,0,0.3);
+    }
+
+    .leaflet-top.leaflet-left {
+      margin-top: 10px;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="map"></div>
+  <div id="coords">Latitude: – | Longitude: –</div>
+
+  <!-- Leaflet JS -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    crossorigin=""
+  ></script>
+
+  <script>
+    const map = L.map('map').setView([14.5995, 120.9842], 13); // Manila as fallback
+
+    // Load tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Human icon
+    const oldHumanIcon = L.icon({
+      iconUrl: 'https://cdn-icons-png.flaticon.com/512/847/847969.png',
+      iconSize: [32, 32],
+      iconAnchor: [16, 32]
+    });
+
+    const humanIcon = L.icon({
+      iconUrl: 'https://cdn-icons-png.flaticon.com/512/194/194938.png',
+      iconSize: [32, 32],
+      iconAnchor: [16, 16]
+    });
+
+
+    let marker;
+
+    function updateCoordinates(lat, lng) {
+      document.getElementById('coords').textContent =
+        `Latitude: ${lat.toFixed(6)} | Longitude: ${lng.toFixed(6)}`;
+    }
+
+    function centerOnMarker() {
+      if (marker) {
+        const pos = marker.getLatLng();
+        map.setView(pos, map.getZoom());
+      }
+    }
+
+    // Add custom button
+    const recenterControl = L.Control.extend({
+      options: { position: 'topleft' },
+
+      onAdd: function () {
+        const container = L.DomUtil.create('div', 'leaflet-control-locate');
+        container.innerHTML = '📍 Re-center';
+        container.onclick = centerOnMarker;
+        return container;
+      }
+    });
+
+    map.addControl(new recenterControl());
+
+    map.locate({ setView: true, maxZoom: 16 });
+
+    map.on('locationfound', function (e) {
+      if (marker) map.removeLayer(marker);
+
+      marker = L.marker(e.latlng, { icon: humanIcon, draggable: true }).addTo(map);
+      updateCoordinates(e.latlng.lat, e.latlng.lng);
+
+      marker.on('drag', function (e) {
+        const pos = e.latlng;
+        updateCoordinates(pos.lat, pos.lng);
+      });
+    });
+
+    map.on('locationerror', function () {
+      alert("Could not get your location. Using default location.");
+      const fallback = [14.5995, 120.9842];
+      marker = L.marker(fallback, { icon: humanIcon, draggable: true }).addTo(map);
+      map.setView(fallback, 13);
+      updateCoordinates(fallback[0], fallback[1]);
+
+      marker.on('drag', function (e) {
+        const pos = e.latlng;
+        updateCoordinates(pos.lat, pos.lng);
+      });
+    });
+  </script>
+</body>
+</html>
