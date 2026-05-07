@@ -3,7 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Kilaw</title>
+  <title>Project Kilaw — Cloud &amp; Automation for Philippine SMEs</title>
+  <meta name="description" content="Project Kilaw is an IT startup coming soon — cloud and automation solutions built for Philippine small and medium enterprises.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://www.projectkilaw.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.projectkilaw.com/">
+  <meta property="og:title" content="Project Kilaw — Cloud & Automation for Philippine SMEs">
+  <meta property="og:description" content="Project Kilaw is coming soon. Cloud and automation solutions built for Philippine small and medium enterprises.">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Project Kilaw — Cloud & Automation for Philippine SMEs">
+  <meta name="twitter:description" content="Project Kilaw is coming soon. Cloud and automation solutions built for Philippine small and medium enterprises.">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -20,14 +30,65 @@
     .center { text-align: center; color: #fff; }
 
     .label {
-      font-size: 11px;
-      letter-spacing: 4px;
-      text-transform: uppercase;
+      font-size: 13px;
+      letter-spacing: 0.5px;
       color: #7ecbaa;
       margin-bottom: 24px;
       opacity: 0;
       animation: simpleFade 1s ease forwards;
       animation-delay: 1.6s;
+    }
+
+    .game-stats {
+      margin-top: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      opacity: 0;
+      animation: simpleFade 1s ease forwards;
+      animation-delay: 2s;
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .stat-value {
+      font-size: clamp(22px, 4vw, 36px);
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -1px;
+      line-height: 1;
+      transition: color 0.2s ease;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-value.flash {
+      color: #7ecbaa;
+      animation: statPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes statPop {
+      0%   { transform: scale(1); }
+      50%  { transform: scale(1.25); }
+      100% { transform: scale(1); }
+    }
+
+    .stat-label {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(126, 203, 170, 0.6);
+    }
+
+    .stat-divider {
+      width: 1px;
+      height: 36px;
+      background: rgba(126, 203, 170, 0.25);
     }
 
     h1 {
@@ -84,6 +145,48 @@
       transform: translateX(-50%) translateY(-20px) scale(1);
     }
 
+    .kilaw-bubble {
+      position: absolute;
+      bottom: calc(100% + 18px);
+      left: 50%;
+      transform: translateX(-50%) translateY(6px) scale(0.85);
+      background: #fff;
+      color: #1a1a1a;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      padding: 6px 11px;
+      border-radius: 20px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      filter: drop-shadow(0 3px 8px rgba(0,0,0,0.3));
+    }
+
+    .kilaw-bubble::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: #fff;
+    }
+
+    .char-k:hover .kilaw-bubble {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0) scale(1);
+      animation: bubbleWiggle 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes bubbleWiggle {
+      0%   { transform: translateX(-50%) translateY(6px) scale(0.85); }
+      60%  { transform: translateX(-50%) translateY(-2px) scale(1.05); }
+      100% { transform: translateX(-50%) translateY(0) scale(1); }
+    }
+
     .divider {
       height: 2px;
       background: #7ecbaa;
@@ -102,55 +205,466 @@
       from { width: 0; }
       to   { width: 48px; }
     }
+
+    @keyframes charWave {
+      0%   { transform: translateY(0)     scale(1);    color: #fff; }
+      30%  { transform: translateY(-18px) scale(1.15); color: #7ecbaa; }
+      55%  { transform: translateY(5px)   scale(0.95); color: #7ecbaa; }
+      100% { transform: translateY(0)     scale(1);    color: #fff; }
+    }
+
+    .char-wave {
+      animation: charWave 0.55s ease forwards !important;
+      pointer-events: none;
+    }
+
+    /* Revealed (timeout) state */
+    .char-k.revealed .kilaw-img {
+      opacity: 1 !important;
+      transform: translateX(-50%) translateY(-20px) scale(1) !important;
+    }
+
+    .char-k.revealed .kilaw-bubble {
+      opacity: 1 !important;
+      transform: translateX(-50%) translateY(0) scale(1) !important;
+    }
+
+    /* Game over state */
+    .char-k.game-end {
+      transform: translateY(-12px);
+      color: #7ecbaa;
+    }
+
+    .game-stats.game-over {
+      opacity: 0.25;
+      transition: opacity 0.6s ease;
+    }
+
+    /* Paused state */
+    h1.paused .char,
+    h1.paused .char-k {
+      color: rgba(255, 255, 255, 0.28) !important;
+    }
+
+    h1.paused .char:hover,
+    h1.paused .char-k:hover {
+      transform: none !important;
+      color: rgba(255, 255, 255, 0.28) !important;
+    }
+
+    h1.paused .char-k:hover .kilaw-img,
+    h1.paused .char-k:hover .kilaw-bubble {
+      opacity: 0 !important;
+    }
+
+    /* Buttons */
+    .game-controls {
+      margin-top: 22px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      opacity: 0;
+      animation: simpleFade 1s ease forwards;
+      animation-delay: 2.2s;
+    }
+
+    .ctrl-btn {
+      background: transparent;
+      border: 1px solid rgba(126, 203, 170, 0.35);
+      color: rgba(126, 203, 170, 0.75);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .ctrl-btn:hover {
+      background: rgba(126, 203, 170, 0.1);
+      color: #7ecbaa;
+      border-color: rgba(126, 203, 170, 0.7);
+    }
+
+    .ctrl-btn:active {
+      background: rgba(126, 203, 170, 0.18);
+    }
+
+    .site-footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      color: rgba(126, 203, 170, 0.45);
+      padding: 12px 0;
+      pointer-events: none;
+    }
   </style>
   <script>
+    let timerInterval   = null;
+    let timerStart      = null;
+    let pausedElapsedMs = 0;
+    let isPaused        = false;
+    let foundCount      = 0;
+    let missedCount     = 0;
+    let bestMs          = null;
+    let revealTimeout   = null;
+    let pendingReveal   = false;
+
+    /* ── Timer ─────────────────────────────────────────────── */
+    function startTimerTick() {
+      clearInterval(timerInterval);
+      const timerEl = document.getElementById('timer');
+      timerInterval = setInterval(() => {
+        const elapsed = (Date.now() - timerStart) / 1000;
+        if (elapsed >= 5) {
+          onTimeout();
+          return;
+        }
+        timerEl.textContent = elapsed.toFixed(1) + 's';
+      }, 100);
+    }
+
+    function startTimer() {
+      timerStart = Date.now();
+      startTimerTick();
+    }
+
+    function recordFind() {
+      clearInterval(timerInterval);
+      const elapsedMs = Date.now() - timerStart;
+      const elapsedS  = (elapsedMs / 1000).toFixed(1);
+
+      foundCount++;
+      document.getElementById('found-count').textContent = foundCount;
+      flashStat('found-count');
+      document.getElementById('timer').textContent = elapsedS + 's';
+      flashStat('timer');
+
+      if (bestMs === null || elapsedMs < bestMs) {
+        bestMs = elapsedMs;
+        document.getElementById('best-time').textContent = elapsedS + 's';
+        flashStat('best-time');
+      }
+    }
+
+    function onTimeout() {
+      clearInterval(timerInterval);
+      document.getElementById('timer').textContent = '5.0s';
+
+      const charK = document.querySelector('.char-k');
+      if (charK) {
+        charK.removeEventListener('click', onKilawClick);
+        const bubble = charK.querySelector('.kilaw-bubble');
+        if (bubble) bubble.textContent = ':p';
+        charK.classList.add('revealed');
+      }
+
+      missedCount++;
+      document.getElementById('missed-count').textContent = missedCount;
+      flashStat('missed-count');
+
+      revealTimeout = setTimeout(() => {
+        revealTimeout = null;
+        if (isPaused) {
+          pendingReveal = true;
+          return;
+        }
+        if (foundCount + missedCount >= 5) {
+          endGame();
+          return;
+        }
+        triggerPostReveal();
+      }, 2000);
+    }
+
+    function endGame() {
+      clearInterval(timerInterval);
+      clearTimeout(revealTimeout);
+      revealTimeout = null;
+      pendingReveal = false;
+
+      // Clean up any active char-k
+      const existing = document.querySelector('.char-k');
+      if (existing) {
+        existing.removeEventListener('click', onKilawClick);
+        existing.classList.remove('char-k', 'revealed');
+        existing.querySelector('.kilaw-img')?.remove();
+        existing.querySelector('.kilaw-bubble')?.remove();
+      }
+
+      // Place kilaw image on K (index 8), no bubble
+      const chars = document.querySelectorAll('h1 .char');
+      const kChar = chars[8];
+      if (kChar) {
+        kChar.classList.add('char-k', 'revealed', 'game-end');
+        const img = document.createElement('img');
+        img.className = 'kilaw-img';
+        img.src = 'assets/kilaw.png';
+        img.alt = '';
+        kChar.appendChild(img);
+      }
+
+      const stats = document.querySelector('.game-stats');
+      stats.style.transition = 'opacity 0.6s ease';
+      stats.style.opacity = '0.25';
+      stats.querySelectorAll('.stat-value').forEach(el => {
+        el.style.transition = 'color 0.6s ease';
+        el.style.color = 'rgba(126, 203, 170, 0.6)';
+      });
+      document.getElementById('pause-btn').disabled = true;
+    }
+
+    function triggerPostReveal() {
+      pendingReveal = false;
+      if (foundCount + missedCount >= 5) {
+        endGame();
+        return;
+      }
+      const charK = document.querySelector('.char-k');
+      if (charK) {
+        charK.classList.remove('revealed');
+        charK.classList.remove('char-k');
+        charK.querySelector('.kilaw-img')?.remove();
+        charK.querySelector('.kilaw-bubble')?.remove();
+      }
+
+      const allChars = document.querySelectorAll('h1 .char, h1 .char-k');
+      const stagger = 45;
+      const waveDuration = 550;
+
+      allChars.forEach((c, i) => {
+        setTimeout(() => {
+          c.classList.add('char-wave');
+          c.addEventListener('animationend', () => c.classList.remove('char-wave'), { once: true });
+        }, i * stagger);
+      });
+
+      setTimeout(() => {
+        placeKilawImage();
+        startTimer();
+      }, allChars.length * stagger + waveDuration);
+    }
+
+    function flashStat(id) {
+      const el = document.getElementById(id);
+      el.classList.remove('flash');
+      void el.offsetWidth;
+      el.classList.add('flash');
+      el.addEventListener('animationend', () => el.classList.remove('flash'), { once: true });
+    }
+
+    /* ── Pause / Resume ────────────────────────────────────── */
+    function togglePause() {
+      const btn = document.getElementById('pause-btn');
+      const h1  = document.querySelector('h1');
+
+      if (isPaused) {
+        isPaused = false;
+        h1.classList.remove('paused');
+        btn.textContent = 'Pause';
+
+        if (pendingReveal) {
+          triggerPostReveal();
+        } else {
+          timerStart = Date.now() - pausedElapsedMs;
+          startTimerTick();
+          const charK = document.querySelector('.char-k');
+          if (charK) charK.addEventListener('click', onKilawClick);
+        }
+      } else {
+        isPaused = true;
+        pausedElapsedMs = Date.now() - timerStart;
+        clearInterval(timerInterval);
+
+        if (revealTimeout !== null) {
+          clearTimeout(revealTimeout);
+          revealTimeout = null;
+          pendingReveal = true;
+        }
+
+        h1.classList.add('paused');
+        btn.textContent = 'Resume';
+        const charK = document.querySelector('.char-k');
+        if (charK) charK.removeEventListener('click', onKilawClick);
+      }
+    }
+
+    /* ── Reset ─────────────────────────────────────────────── */
+    function resetGame() {
+      clearInterval(timerInterval);
+      clearTimeout(revealTimeout);
+      revealTimeout = null;
+      pendingReveal = false;
+      isPaused = false;
+      pausedElapsedMs = 0;
+      foundCount = 0;
+      missedCount = 0;
+      bestMs = null;
+
+      const charK = document.querySelector('.char-k');
+      if (charK) {
+        charK.classList.remove('revealed', 'char-k', 'game-end');
+        charK.removeEventListener('click', onKilawClick);
+        charK.querySelector('.kilaw-img')?.remove();
+        charK.querySelector('.kilaw-bubble')?.remove();
+      }
+
+      const h1 = document.querySelector('h1');
+      h1.classList.remove('paused');
+      const stats = document.querySelector('.game-stats');
+      stats.style.transition = 'opacity 0.6s ease';
+      stats.style.opacity = '';
+      stats.querySelectorAll('.stat-value').forEach(el => {
+        el.style.transition = 'color 0.6s ease';
+        el.style.color = '';
+      });
+      const pauseBtn = document.getElementById('pause-btn');
+      pauseBtn.disabled = false;
+      pauseBtn.textContent = 'Pause';
+      document.getElementById('found-count').textContent = '0';
+      document.getElementById('missed-count').textContent = '0';
+      document.getElementById('best-time').textContent = '—';
+
+      const allChars = document.querySelectorAll('h1 .char, h1 .char-k');
+      const stagger = 45;
+      const waveDuration = 550;
+
+      allChars.forEach((c, i) => {
+        setTimeout(() => {
+          c.classList.add('char-wave');
+          c.addEventListener('animationend', () => c.classList.remove('char-wave'), { once: true });
+        }, i * stagger);
+      });
+
+      setTimeout(() => {
+        placeKilawImage();
+        startTimer();
+      }, allChars.length * stagger + waveDuration);
+    }
+
+    /* ── Kilaw placement ───────────────────────────────────── */
     function placeKilawImage() {
       const positions = [
-        { letter: 'P', index: 0 },
-        { letter: 'r', index: 1 },
-        { letter: 'o', index: 2 },
-        { letter: 'e', index: 4 },
-        { letter: 'c', index: 5 },
-        { letter: 't', index: 6 },
-        { letter: 'K', index: 8 },
-        { letter: 'i', index: 9 },
-        { letter: 'l', index: 10 },
-        { letter: 'a', index: 11 },
-        { letter: 'w', index: 12 }
+        { index: 0 }, { index: 1 }, { index: 2 },
+        { index: 4 }, { index: 5 }, { index: 6 },
+        { index: 8 }, { index: 9 }, { index: 10 },
+        { index: 11 }, { index: 12 }
       ];
 
       const randomPos = positions[Math.floor(Math.random() * positions.length)];
-      const chars = document.querySelectorAll('h1 .char, h1 .char-k');
+      const chars     = document.querySelectorAll('h1 .char, h1 .char-k');
 
       chars.forEach((char, i) => {
         if (i === randomPos.index) {
           if (!char.classList.contains('char-k')) {
             char.classList.add('char-k');
+
             const img = document.createElement('img');
             img.className = 'kilaw-img';
             img.src = 'assets/kilaw.png';
             img.alt = '';
             char.appendChild(img);
+
+            const bubble = document.createElement('span');
+            bubble.className = 'kilaw-bubble';
+            bubble.textContent = '🐟 kilawin mo!';
+            char.appendChild(bubble);
           }
+          char.addEventListener('click', onKilawClick);
         } else {
-          const img = char.querySelector('.kilaw-img');
-          if (img) img.remove();
+          char.removeEventListener('click', onKilawClick);
+          if (!char.classList.contains('char-k')) return;
+          char.classList.remove('char-k');
+          char.querySelector('.kilaw-img')?.remove();
+          char.querySelector('.kilaw-bubble')?.remove();
         }
       });
     }
 
-    document.addEventListener('DOMContentLoaded', placeKilawImage);
+    function onKilawClick() {
+      if (isPaused) return;
+
+      const charK = document.querySelector('.char-k');
+      if (charK) {
+        charK.removeEventListener('click', onKilawClick);
+        charK.classList.remove('char-k');
+        charK.querySelector('.kilaw-img')?.remove();
+        charK.querySelector('.kilaw-bubble')?.remove();
+      }
+
+      recordFind();
+
+      if (foundCount + missedCount >= 5) {
+        endGame();
+        return;
+      }
+
+      const allChars    = document.querySelectorAll('h1 .char, h1 .char-k');
+      const stagger     = 45;
+      const waveDuration = 550;
+
+      allChars.forEach((c, i) => {
+        setTimeout(() => {
+          c.classList.add('char-wave');
+          c.addEventListener('animationend', () => c.classList.remove('char-wave'), { once: true });
+        }, i * stagger);
+      });
+
+      setTimeout(() => {
+        placeKilawImage();
+        startTimer();
+      }, allChars.length * stagger + waveDuration);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelector('.game-stats').addEventListener('animationend', () => {
+        placeKilawImage();
+        startTimer();
+      }, { once: true });
+    });
   </script>
 </head>
 <body>
 
   <div class="center">
-    <p class="label">Coming Soon</p>
+    <p class="label">How fast can you find the kilawin?</p>
     <h1>
       <span class="char">P</span><span class="char">r</span><span class="char">o</span><span class="char">j</span><span class="char">e</span><span class="char">c</span><span class="char">t</span><span class="char space"> </span><span class="char">K</span><span class="char">i</span><span class="char">l</span><span class="char">a</span><span class="char">w</span>
     </h1>
     <div class="divider"></div>
+    <div class="game-stats">
+      <div class="stat">
+        <span class="stat-value" id="timer">0.0s</span>
+        <span class="stat-label">Time</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-value" id="found-count">0</span>
+        <span class="stat-label">Found</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-value" id="missed-count">0</span>
+        <span class="stat-label">Missed</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-value" id="best-time">—</span>
+        <span class="stat-label">Best</span>
+      </div>
+    </div>
+    <div class="game-controls">
+      <button class="ctrl-btn" id="pause-btn" onclick="togglePause()">Pause</button>
+      <button class="ctrl-btn" onclick="resetGame()">Reset</button>
+    </div>
   </div>
+
+  <footer class="site-footer">© 2026 Project Kilaw</footer>
 
 </body>
 </html>
